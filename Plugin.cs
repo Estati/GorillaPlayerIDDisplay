@@ -1,52 +1,26 @@
-using System;
-using BepInEx;
-using Photon.Pun;
-using TMPro;
 
-namespace GorillaPlayerIDDisplay
+using MelonLoader;
+using GorillaTagMLModExample;
+using UnityEngine;
+
+// !!!
+// NOTE: When you build the project, your IDE will automatically try to move the compiled DLL to the Mods folder, with the name of GorillaTagMLModExample.dll/GorillaTagMLModExample.pdb. If you change the name of the project, make sure to change the name of the DLL in the .csproj file.
+// !!!
+
+// Change the MelonInfo to correspond to your mod info. The first parameter is the class that inherits from MelonMod, so if you change the class name below, make sure to change it here as well.
+// Make sure to also change the info in Constants.cs if you are going to use that. Constants dont seem to work here, so it isn't used in the MelonInfo attribute, but you can still use it in your mod code.
+[assembly: MelonInfo(typeof(PlayerIDGetters), "PlayerIDGetter", "1.0.0", "Estatic")]
+[assembly: MelonGame("Another Axiom", "Gorilla Tag")]
+namespace GorillaTagMLModExample
 {
-    [BepInPlugin(PluginInfo.GUID, PluginInfo.Name, PluginInfo.Version)]
-    public class PlayerIDDisplay : BaseUnityPlugin
+    public class PlayerIDGetters : MelonMod
     {
-
-        void Start()
+        public GameObject testObject;
+        // InitializeMelon runs as soon as the mod loads. If you instead want to run code when the player is spawned, put your code in GorillaTagger.OnPlayerSpawned.
+        public override void OnInitializeMelon()
         {
-            PhotonNetwork.LocalPlayer.SetCustomProperties(new ExitGames.Client.Photon.Hashtable()
-            {
-                {
-                    PluginInfo.Name,
-                    PluginInfo.Version
-                }
-            }, null, null);
-            Logger.LogInfo($"Plugin {PluginInfo.GUID} is loaded!");
+
         }
 
-        private void Update()
-        {
-            foreach (VRRig vrrig in GorillaParent.instance.vrrigs)
-            {
-                if (vrrig == null || vrrig.isOfflineVRRig) continue;
-
-                string playerIdText = $"ID: {vrrig?.Creator?.UserId}";
-
-                if (!vrrig.playerText1.text.Contains(playerIdText))
-                    vrrig.playerText1.text += $"\n<color=#40E0D0>{playerIdText}</color>";
-
-                if (!vrrig.playerText2.text.Contains(playerIdText))
-                    vrrig.playerText2.text += $"\n{playerIdText}";
-            }
-
-            if (GorillaTagger.Instance != null && GorillaTagger.Instance.offlineVRRig != null)
-            {
-                VRRig localRig = GorillaTagger.Instance.offlineVRRig;
-                string localId = $"ID: {localRig?.Creator?.UserId ?? "Unknown"}";
-
-                if (!localRig.playerText1.text.Contains(localId))
-                    localRig.playerText1.text += $"\n<color=#40E0D0>{localId}</color>";
-
-                if (!localRig.playerText2.text.Contains(localId))
-                    localRig.playerText2.text += $"\n{localId}";
-            }
-        }
     }
 }
